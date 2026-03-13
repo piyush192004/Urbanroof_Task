@@ -23,7 +23,7 @@ An end-to-end system that reads an **Inspection Report** + **Thermal Report** (P
 └────────────────────────┬──────────────────────────────────────┘
                          │  Multimodal PDF analysis
 ┌────────────────────────▼────────────────────────────────┐
-│                  Gemini 1.5 Flash API                   │
+│                  Gemini 2.5 Flash Lite API              │
 │  - Reads both PDFs natively (multimodal)                │
 │  - Cross-references thermal images with inspection data │
 │  - Returns structured JSON DDR                          │

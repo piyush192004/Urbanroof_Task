@@ -8,23 +8,23 @@ An end-to-end system that reads an **Inspection Report** + **Thermal Report** (P
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    React Frontend (Vite)                 │
+│                    React Frontend (Vite)                │
 │  - Upload Page: drag-drop two PDFs + API config         │
 │  - Report Page: collapsible DDR viewer with print/PDF   │
 └────────────────────────┬────────────────────────────────┘
                          │  POST /generate-ddr (multipart)
-┌────────────────────────▼────────────────────────────────┐
-│                  FastAPI Backend                         │
-│  - Validates PDFs                                       │
-│  - Converts to base64                                   │
-│  - Sends both PDFs + system prompt to Gemini 1.5 Flash  │
-│  - Parses JSON response                                 │
-│  - Returns structured DDR                               │
-└────────────────────────┬────────────────────────────────┘
+┌────────────────────────▼──────────────────────────────────────┐
+│                  FastAPI Backend                              │
+│  - Validates PDFs                                             │
+│  - Converts to base64                                         │
+│  - Sends both PDFs + system prompt to Gemini-2.5-Flash-Lite   │
+│  - Parses JSON response                                       │
+│  - Returns structured DDR                                     │
+└────────────────────────┬──────────────────────────────────────┘
                          │  Multimodal PDF analysis
 ┌────────────────────────▼────────────────────────────────┐
 │                  Gemini 1.5 Flash API                   │
-│  - Reads both PDFs natively (multimodal)               │
+│  - Reads both PDFs natively (multimodal)                │
 │  - Cross-references thermal images with inspection data │
 │  - Returns structured JSON DDR                          │
 └─────────────────────────────────────────────────────────┘
@@ -34,21 +34,22 @@ An end-to-end system that reads an **Inspection Report** + **Thermal Report** (P
 
 ## Generated DDR Sections
 
-| Section | Description |
-|---------|-------------|
-| **1. Property Issue Summary** | Overview, property metadata, score |
-| **2. Area-wise Observations** | Room-by-room: negative side, positive side, thermal data, photo refs |
-| **3. Probable Root Causes** | Evidence-backed causal analysis |
-| **4. Severity Assessment** | Critical / High / Moderate / Low with reasoning table |
-| **5. Recommended Actions** | Prioritized: Immediate → Short-term → Long-term |
-| **6. Additional Notes** | Any extra observations |
-| **7. Missing / Unclear Information** | Flags gaps, conflicts between reports |
+| Section                              | Description                                                          |
+| ------------------------------------ | -------------------------------------------------------------------- |
+| **1. Property Issue Summary**        | Overview, property metadata, score                                   |
+| **2. Area-wise Observations**        | Room-by-room: negative side, positive side, thermal data, photo refs |
+| **3. Probable Root Causes**          | Evidence-backed causal analysis                                      |
+| **4. Severity Assessment**           | Critical / High / Moderate / Low with reasoning table                |
+| **5. Recommended Actions**           | Prioritized: Immediate → Short-term → Long-term                      |
+| **6. Additional Notes**              | Any extra observations                                               |
+| **7. Missing / Unclear Information** | Flags gaps, conflicts between reports                                |
 
 ---
 
 ## Setup
 
 ### Prerequisites
+
 - Python 3.10+
 - Node.js 18+
 - Gemini API key from [Google AI Studio](https://aistudio.google.com)
@@ -105,13 +106,14 @@ npm run dev
 
 ### `POST /generate-ddr`
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `inspection_report` | File (PDF) | ✅ | Inspection Report PDF |
-| `thermal_report` | File (PDF) | ✅ | Thermal Report PDF |
-| `api_key` | string | Optional | Gemini API key (overrides env var) |
+| Field               | Type       | Required | Description                        |
+| ------------------- | ---------- | -------- | ---------------------------------- |
+| `inspection_report` | File (PDF) | ✅       | Inspection Report PDF              |
+| `thermal_report`    | File (PDF) | ✅       | Thermal Report PDF                 |
+| `api_key`           | string     | Optional | Gemini API key (overrides env var) |
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -137,6 +139,7 @@ Returns `{ "status": "ok", "gemini_configured": true/false }`
 ## DDR AI Rules (System Prompt)
 
 The Gemini system prompt enforces:
+
 - ❌ No invented facts — only documented data is reported
 - ⚠️ Conflicts between thermal and inspection are **flagged explicitly**
 - 🌡️ Thermal image IDs (e.g., `RB02380X`) are correlated with inspection areas

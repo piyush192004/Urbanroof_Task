@@ -179,7 +179,7 @@ ddr-system/
 
 ## Key Design Decisions
 
-**Why Gemini 1.5 Flash?**  
+**Why Gemini 2.5 Flash Lite?**  
 Natively reads PDF files (including embedded images in thermal reports) without needing a separate PDF parser. The multimodal capability means thermal images and their temperature readings are understood visually.
 
 **Why FastAPI?**  
